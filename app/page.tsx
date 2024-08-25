@@ -57,7 +57,7 @@ export default function Home() {
       
       </div>
 
-      <div className=" w-full px-10">
+      <div className=" w-full px-5">
         <div className="py-5">
         </div>
         <div className="w-full py-3 ">
