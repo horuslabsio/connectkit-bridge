@@ -45,7 +45,7 @@ export default function Home() {
   return (
     <main className="h-[100vh] grid grid-cols-2 items-center justify-center px-20 gap-[30px] ">
 
-      <div className="flex flex-col items-center justify-center border-r border-gray-300 h-full ">
+      <div className="flex flex-col items-center justify-center border-r border-gray-300 h-full px-10 ">
         <div className="w-[60px] h-[60px] mb-5">
          <img className="w-fill h-full" src={TOKENBOUND_ACCOUNT_ICON} alt="Tokenbound connector" />
         </div>
