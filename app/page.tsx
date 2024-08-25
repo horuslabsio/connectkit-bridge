@@ -43,7 +43,7 @@ export default function Home() {
   const wallets = ["Braavos", "ArgentX", "ArgentWebWallet"]
 
   return (
-    <main className="h-[100vh] grid grid-cols-2 items-center justify-center px-20 gap-[130px] ">
+    <main className="h-[100vh] grid grid-cols-2 items-center justify-center px-20 gap-[30px] ">
 
       <div className="flex flex-col items-center justify-center border-r border-gray-300 h-full ">
         <div className="w-[60px] h-[60px] mb-5">
@@ -57,7 +57,7 @@ export default function Home() {
       
       </div>
 
-      <div className=" w-full max-w-[500px]">
+      <div className=" w-full px-10">
         <div className="py-5">
         </div>
         <div className="w-full py-3 ">
