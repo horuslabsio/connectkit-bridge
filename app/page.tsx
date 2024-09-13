@@ -17,11 +17,20 @@ export default function Home() {
     parentWallet: "",
   });
 
+  const [errors, setErrors] = useState({
+    address: "",
+    parentWallet: "",
+  });
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setOptions((prevOptions) => ({
       ...prevOptions,
       [name]: value,
+    }));
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: "", // Clear the error message when input changes
     }));
   };
 
@@ -31,12 +40,22 @@ export default function Home() {
       ...prevOptions,
       [name]: value,
     }));
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: "", // Clear the error message when input changes
+    }));
   };
 
   const handleSubmit = () => {
-    // Send the options data to the parent window
-    if (options.address.length == 0 || options.parentWallet.length == 0) {
-      alert("Please fill all fields");
+    // Validate inputs
+    const newErrors = {
+      address: options.address.length === 0 ? "Please enter tokenbound account address" : "",
+      parentWallet: options.parentWallet.length === 0 ? "Please select parent wallet" : "",
+    };
+
+    setErrors(newErrors);
+
+    if (newErrors.address || newErrors.parentWallet) {
       return;
     }
 
@@ -59,16 +78,15 @@ export default function Home() {
   ];
 
   return (
-    <main className="flex items-center  h-[100vh]">
+    <main className="flex items-center h-[100vh]">
       <div className="w-full bg-overlay h-full rounded-[24px] bg-cover bg-no-repeat">
         <div className="grid grid-cols-1 md:grid-cols-2 items-center justify-center h-full">
-          <div className=" hidden md:flex flex-col items-center md:py-[200px] h-full">
-
+          <div className="hidden md:flex flex-col items-center md:py-[250px] h-full">
             <div className="flex items-center">
               <div className="w-10 h-10">
                 <img className="" src="/logo.svg" alt="logo" />
               </div>
-              <h1 className="text-[16px] font-poppins font-medium  text-[#F0F0F0]">
+              <h1 className="text-[16px] font-poppins font-medium text-[#F0F0F0]">
                 Connect Account
               </h1>
             </div>
@@ -87,7 +105,7 @@ export default function Home() {
                 wallet.
               </p>
             </div>
-            <div className="pt-[60px] space-y-4">
+            <div className="pt-[40px] space-y-3">
               <input
                 type="text"
                 placeholder="Account address"
@@ -95,37 +113,47 @@ export default function Home() {
                 name="address"
                 value={options.address}
                 onChange={handleChange}
-                className="w-full border font-poppins text-sm border-[#C7C7C7] bg-white text-black h-[50px] font-normal rounded-[4px] px-3 py-2 mb-1 placeholder:text-gray-500 focus:outline-none focus:border-blue-500"
+                className={`w-full border font-poppins text-sm bg-white text-black h-[50px] font-normal rounded-[4px] px-3 py-2 mb-1 placeholder:text-gray-500 focus:outline-none focus:border-blue-500 ${
+                  errors.address ? "border-red-500" : "border-[#C7C7C7]"
+                }`}
               />
+              {errors.address && (
+                <p className="text-red-500 text-sm">{errors.address}</p>
+              )}
 
-              <div className="w-full border text-sm border-[#C7C7C7] bg-white text-black h-[50px] font-normal rounded-[4px] px-3 py-2 mb-1 placeholder:text-gray-500 focus:outline-none focus:border-blue-500 ">
+              <div
+                className={`w-full border text-sm bg-white text-black h-[50px] font-normal rounded-[4px] px-3 py-2 mb-1 placeholder:text-gray-500 focus:outline-none ${
+                  errors.parentWallet ? "border-red-500" : "border-[#C7C7C7]"
+                }`}
+              >
                 <select
                   id="options"
                   name="parentWallet"
                   value={options.parentWallet}
                   onChange={handleSelectChange}
-                  className="w-full h-full focus:outline-none font-poppins text-gray-300"
+                  className="w-full h-full focus:outline-none font-poppins "
                 >
-                  <option className="" value="" disabled>
+                  <option value="" disabled>
                     Select an option
                   </option>
-
                   {wallets.map(({ id, label }) => (
-                    <option className="capitalize" value={id}>
+                    <option key={id} value={id} className="capitalize">
                       {label}
                     </option>
                   ))}
                 </select>
               </div>
+              {errors.parentWallet && (
+                <p className="text-red-500 text-sm">{errors.parentWallet}</p>
+              )}
 
               <div className="py-5 pt-8 w-full">
                 <button
                   onClick={handleSubmit}
-                  className="w-full text-[#F9F9F9] font-poppins  bg-[#238DFD] rounded-lg text-base h-[46px] border-[#238DFD] outline-none p-2"
+                  className="w-full text-[#F9F9F9] font-poppins bg-[#238DFD] rounded-lg text-base h-[46px] border-[#238DFD] outline-none p-2"
                 >
                   Connect account
                 </button>
-                <div></div>
               </div>
             </div>
           </div>
