@@ -59,7 +59,7 @@ export default function Home() {
   ];
 
   return (
-    <main className="flex items-center  h-[100vh] px-[20px] py-[20px]">
+    <main className="flex items-center  h-[100vh]">
       <div className="w-full bg-overlay h-full rounded-[24px] bg-cover bg-no-repeat">
         <div className="grid grid-cols-2 items-center justify-center h-full">
           <div className="flex flex-col items-center py-[150px] h-full">
@@ -79,7 +79,7 @@ export default function Home() {
 
           <div className="flex flex-col py-[100px] bg-white rounded-[24px] h-full px-5">
             <div className="space-y-2">
-              <p className="text-[#1E1E1E] font-poppins text-[20px] font-semibold leading-[30px]">
+              <p className="text-[#1E1E1E] font-poppins text-[18px] font-semibold leading-[30px]">
                 Connect Your Tokenbound Account
               </p>
               <p className="text-[#7E7E7E] font-poppins text-[14px] font-normal leading-[21px]">
