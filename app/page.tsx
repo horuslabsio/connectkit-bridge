@@ -61,8 +61,8 @@ export default function Home() {
   return (
     <main className="flex items-center  h-[100vh]">
       <div className="w-full bg-overlay h-full rounded-[24px] bg-cover bg-no-repeat">
-        <div className="grid grid-cols-1 lg:grid-cols-2 items-center justify-center h-full">
-          <div className=" hidden lg:flex flex-col items-center lg:py-[200px] h-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 items-center justify-center h-full">
+          <div className=" hidden md:flex flex-col items-center lg:py-[200px] h-full">
 
             <div className="flex items-center">
               <div className="w-10 h-10">
@@ -77,7 +77,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="flex flex-col py-40 lg:py-[100px] bg-white rounded-[24px] h-full px-5">
+          <div className="flex flex-col py-40 md:py-[100px] bg-white rounded-[24px] h-full px-5">
             <div className="space-y-2">
               <p className="text-[#1E1E1E] font-poppins text-[18px] font-semibold leading-[30px]">
                 Connect Your Tokenbound Account
