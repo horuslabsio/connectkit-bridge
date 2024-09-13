@@ -61,8 +61,8 @@ export default function Home() {
   return (
     <main className="flex items-center  h-[100vh]">
       <div className="w-full bg-overlay h-full rounded-[24px] bg-cover bg-no-repeat">
-        <div className="grid grid-cols-2 items-center justify-center h-full">
-          <div className="flex flex-col items-center py-[150px] h-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 items-center justify-center h-full">
+          <div className=" hidden lg:flex flex-col items-center lg:py-[200px] h-full">
 
             <div className="flex items-center">
               <div className="w-10 h-10">
@@ -72,12 +72,12 @@ export default function Home() {
                 Connect Account
               </h1>
             </div>
-            <p className="text-[27px] font-poppins  font-bold leading-[40px] text-[#F0F0F0]">
+            <p className="text-[27px] font-poppins font-bold leading-[40px] text-[#F0F0F0]">
               Tokenbound Account
             </p>
           </div>
 
-          <div className="flex flex-col py-[100px] bg-white rounded-[24px] h-full px-5">
+          <div className="flex flex-col py-40 lg:py-[100px] bg-white rounded-[24px] h-full px-5">
             <div className="space-y-2">
               <p className="text-[#1E1E1E] font-poppins text-[18px] font-semibold leading-[30px]">
                 Connect Your Tokenbound Account
@@ -104,9 +104,9 @@ export default function Home() {
                   name="parentWallet"
                   value={options.parentWallet}
                   onChange={handleSelectChange}
-                  className="w-full h-full focus:outline-none font-poppins"
+                  className="w-full h-full focus:outline-none font-poppins text-gray-300"
                 >
-                  <option className="text-gray-300" value="" disabled>
+                  <option className="" value="" disabled>
                     Select an option
                   </option>
 
