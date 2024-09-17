@@ -48,12 +48,15 @@ export default function Home() {
 
   const handleSubmit = () => {
     const newErrors = {
-      address: options.address.length === 0 ? "Please enter tokenbound account address" : "",
-      parentWallet: options.parentWallet.length === 0 ? "Please select parent wallet" : "",
+      address:
+        options.address.length === 0
+          ? "Please enter tokenbound account address"
+          : "",
+      parentWallet:
+        options.parentWallet.length === 0 ? "Please select parent wallet" : "",
     };
 
     setErrors(newErrors);
-
     if (newErrors.address || newErrors.parentWallet) {
       return;
     }
@@ -83,7 +86,11 @@ export default function Home() {
           <div className="hidden md:flex flex-col items-center md:py-[250px] h-full">
             <div className="flex items-center gap-2 justify-center">
               <div className="w-5 h-5">
-                <img className="object-cover w-full h-full"  src="/logo.png" alt="logo" />
+                <img
+                  className="object-cover w-full h-full"
+                  src="/logo.png"
+                  alt="logo"
+                />
               </div>
               <h1 className="text-[16px] font-poppins font-medium text-[#F0F0F0]">
                 Connect Account
