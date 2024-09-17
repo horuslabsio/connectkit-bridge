@@ -42,12 +42,11 @@ export default function Home() {
     }));
     setErrors((prevErrors) => ({
       ...prevErrors,
-      [name]: "", // Clear the error message when input changes
+      [name]: "",
     }));
   };
 
   const handleSubmit = () => {
-    // Validate inputs
     const newErrors = {
       address: options.address.length === 0 ? "Please enter tokenbound account address" : "",
       parentWallet: options.parentWallet.length === 0 ? "Please select parent wallet" : "",
@@ -82,9 +81,9 @@ export default function Home() {
       <div className="w-full bg-overlay h-full rounded-[24px] bg-cover bg-no-repeat">
         <div className="grid grid-cols-1 md:grid-cols-2 items-center justify-center h-full">
           <div className="hidden md:flex flex-col items-center md:py-[250px] h-full">
-            <div className="flex items-center">
-              <div className="w-10 h-10">
-                <img className="" src="/logo.svg" alt="logo" />
+            <div className="flex items-center gap-2 justify-center">
+              <div className="w-5 h-5">
+                <img className="object-cover w-full h-full"  src="/logo.png" alt="logo" />
               </div>
               <h1 className="text-[16px] font-poppins font-medium text-[#F0F0F0]">
                 Connect Account
@@ -96,7 +95,7 @@ export default function Home() {
           </div>
 
           <div className="flex flex-col py-40 md:py-[100px] bg-white rounded-[24px] h-full px-5">
-            <div className="space-y-2">
+            <div className="space-y-1">
               <p className="text-[#1E1E1E] font-poppins text-[18px] font-semibold leading-[30px]">
                 Connect Your Tokenbound Account
               </p>
@@ -150,7 +149,7 @@ export default function Home() {
               <div className="py-5 pt-8 w-full">
                 <button
                   onClick={handleSubmit}
-                  className="w-full text-[#F9F9F9] font-poppins bg-[#238DFD] rounded-lg text-base h-[46px] border-[#238DFD] outline-none p-2"
+                  className="w-full text-[#F9F9F9] font-poppins bg-[#272727] rounded-lg text-base h-[46px] border-[#272727] outline-none p-2"
                 >
                   Connect account
                 </button>
