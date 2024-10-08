@@ -50,7 +50,7 @@ export default function Home() {
     const newErrors = {
       address:
         options.address.length === 0
-          ? "Please enter a valida tokenbound account address"
+          ? "Please enter a valid tokenbound account address"
           : "",
       parentWallet:
         options.parentWallet.length === 0 ? "Please select parent wallet" : "",
