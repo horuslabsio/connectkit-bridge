@@ -30,7 +30,7 @@ export default function Home() {
     }));
     setErrors((prevErrors) => ({
       ...prevErrors,
-      [name]: "", // Clear the error message when input changes
+      [name]: "", 
     }));
   };
 
