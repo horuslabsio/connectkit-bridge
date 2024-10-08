@@ -80,7 +80,7 @@ export default function Home() {
   ];
 
   return (
-    <main className="flex items-center h-auto">
+    <main className="flex items-center h-auto overflow-y-hidden">
       <div className="w-full bg-overlay h-full rounded-[24px] bg-cover bg-no-repeat">
         <div className="grid grid-cols-1 md:grid-cols-2 items-center justify-center h-full">
           <div className="hidden md:flex flex-col items-center md:py-[250px] h-full">
