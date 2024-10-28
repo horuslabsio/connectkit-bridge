@@ -30,7 +30,7 @@ export default function Home() {
     }));
     setErrors((prevErrors) => ({
       ...prevErrors,
-      [name]: "", 
+      [name]: "",
     }));
   };
 
@@ -76,6 +76,10 @@ export default function Home() {
     {
       id: "ArgentWebWallet",
       label: "Argent Web Wallet",
+    },
+    {
+      id: "controller",
+      label: "Cartridge Controller",
     },
   ];
 
