@@ -79,7 +79,7 @@ export default function Home() {
     },
     {
       id: "controller",
-      label: "Controller",
+      label: "Cartridge Controller",
     },
   ];
 
