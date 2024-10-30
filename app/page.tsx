@@ -137,28 +137,27 @@ const controller = new Controller({
 
 
   return (
-    <main className="flex items-center h-auto overflow-y-hidden">
-      <div className="w-full bg-overlay h-full rounded-[24px] bg-cover bg-no-repeat">
-        <div className="grid grid-cols-1 md:grid-cols-2 items-center justify-center h-full">
-          <div className="hidden md:flex flex-col items-center md:py-[250px] h-full">
-            <div className="flex items-center gap-2 justify-center">
-              <div className="w-5 h-5">
-                <img
-                  className="object-cover w-full h-full"
-                  src="/logo.png"
-                  alt="logo"
-                />
-              </div>
-              <h1 className="text-[16px] font-poppins font-medium text-[#F0F0F0]">
-                Connect Account
-              </h1>
+    <main className="h-screen w-screen grid place-content-center overflow-y-hidden">
+      <div className="bg-overlay w-full h-full max-w-[840px] max-h-[540px] rounded-[14px] md:rounded-[24px] md:flex">
+        <div className="hidden basis-1/2 md:flex flex-col items-center md:py-[250px] h-full">
+          <div className="flex items-center gap-2 justify-center">
+            <div className="w-5 h-5">
+              <img
+                className="object-cover w-full h-full"
+                src="/logo.png"
+                alt="logo"
+              />
             </div>
-            <p className="text-[27px] font-poppins font-bold leading-[40px] text-[#F0F0F0]">
-              Tokenbound Account
-            </p>
+            <h1 className="text-[16px] font-poppins font-medium text-[#F0F0F0]">
+              Connect Account
+            </h1>
           </div>
-
-          <div className="flex flex-col py-40 md:py-[100px] bg-white rounded-[24px] h-full px-5">
+          <p className="text-[27px] font-poppins font-bold leading-[40px] text-[#F0F0F0]">
+            Tokenbound Account
+          </p>
+        </div>
+        <div className="bg-white basis-1/2 grid place-content-center rounded-[14px] md:rounded-[24px]">
+          <div className="p-4">
             <div className="space-y-1">
               <p className="text-[#1E1E1E] font-poppins text-[18px] font-semibold leading-[30px]">
                 Connect Your Tokenbound Account
