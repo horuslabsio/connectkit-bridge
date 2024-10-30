@@ -23,30 +23,25 @@ export default function Home() {
     parentWallet: "",
   });
 
-
   const ETH_CONTRACT =
-  "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7";
+    "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7";
 
-const controller = new Controller({
-  policies: [
-    {
-      target: ETH_CONTRACT,
-      method: "approve",
-      description:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-    },
-    {
-      target: ETH_CONTRACT,
-      method: "transfer",
-    },
-  ],
-});
-
-
+  const controller = new Controller({
+    policies: [
+      {
+        target: ETH_CONTRACT,
+        method: "approve",
+        description:
+          "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+      },
+      {
+        target: ETH_CONTRACT,
+        method: "transfer",
+      },
+    ],
+  });
 
   const [username, setUsername] = useState<string>();
-
-
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -109,10 +104,12 @@ const controller = new Controller({
     },
   ];
 
-
   const connectCatridge = async () => {
     try {
-      console.log("Connecting to Cartridge...",  await document.hasStorageAccess());
+      console.log(
+        "Connecting to Cartridge...",
+        await document.hasStorageAccess()
+      );
       const res = await controller.connect();
       if (res) {
         console.log("Connected:", res.address);
@@ -121,44 +118,33 @@ const controller = new Controller({
       console.error("Error connecting to Cartridge:", e);
     }
   };
-  
-
 
   useEffect(() => {
     controller.username()?.then((n) => setUsername(n));
-    
   }, [controller]);
 
-
-
-
-
-
-
-
   return (
-    <main className="flex items-center h-auto overflow-y-hidden">
-      <div className="w-full bg-overlay h-full rounded-[24px] bg-cover bg-no-repeat">
-        <div className="grid grid-cols-1 md:grid-cols-2 items-center justify-center h-full">
-          <div className="hidden md:flex flex-col items-center md:py-[250px] h-full">
-            <div className="flex items-center gap-2 justify-center">
-              <div className="w-5 h-5">
-                <img
-                  className="object-cover w-full h-full"
-                  src="/logo.png"
-                  alt="logo"
-                />
-              </div>
-              <h1 className="text-[16px] font-poppins font-medium text-[#F0F0F0]">
-                Connect Account
-              </h1>
+    <main className="h-screen w-screen grid place-content-center overflow-y-hidden">
+      <div className="bg-overlay w-full h-full max-w-[840px] max-h-[540px] rounded-[14px] md:rounded-[24px] md:flex">
+        <div className="hidden basis-1/2 md:flex flex-col items-center md:py-[250px] h-full">
+          <div className="flex items-center gap-2 justify-center">
+            <div className="w-5 h-5">
+              <img
+                className="object-cover w-full h-full"
+                src="/logo.png"
+                alt="logo"
+              />
             </div>
-            <p className="text-[27px] font-poppins font-bold leading-[40px] text-[#F0F0F0]">
-              Tokenbound Account
-            </p>
+            <h1 className="text-[16px] font-poppins font-medium text-[#F0F0F0]">
+              Connect Account
+            </h1>
           </div>
-
-          <div className="flex flex-col py-40 md:py-[100px] bg-white rounded-[24px] h-full px-5">
+          <p className="text-[27px] font-poppins font-bold leading-[40px] text-[#F0F0F0]">
+            Tokenbound Account
+          </p>
+        </div>
+        <div className="bg-white basis-1/2 grid place-content-center rounded-[14px] md:rounded-[24px]">
+          <div className="p-4">
             <div className="space-y-1">
               <p className="text-[#1E1E1E] font-poppins text-[18px] font-semibold leading-[30px]">
                 Connect Your Tokenbound Account
@@ -212,7 +198,11 @@ const controller = new Controller({
 
               <div className="py-5 pt-8 w-full">
                 <button
-                  onClick={ options.parentWallet == "controller" ? connectCatridge : handleSubmit}
+                  onClick={
+                    options.parentWallet == "controller"
+                      ? connectCatridge
+                      : handleSubmit
+                  }
                   className="w-full text-[#F9F9F9] font-poppins bg-[#272727] rounded-lg text-base h-[46px] border-[#272727] outline-none p-2"
                 >
                   Connect account
