@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import Controller from "@cartridge/controller";
+import { useEffect, useState } from "react";
 
 interface TokenboundOptions {
   address: string;
@@ -21,6 +22,31 @@ export default function Home() {
     address: "",
     parentWallet: "",
   });
+
+
+  const ETH_CONTRACT =
+  "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7";
+
+const controller = new Controller({
+  policies: [
+    {
+      target: ETH_CONTRACT,
+      method: "approve",
+      description:
+        "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+    },
+    {
+      target: ETH_CONTRACT,
+      method: "transfer",
+    },
+  ],
+});
+
+
+
+  const [username, setUsername] = useState<string>();
+
+
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -82,6 +108,33 @@ export default function Home() {
       label: "Cartridge Controller",
     },
   ];
+
+
+  const connectCatridge = async () => {
+    try {
+      console.log("Connecting to Cartridge...",  await document.hasStorageAccess());
+      const res = await controller.connect();
+      if (res) {
+        console.log("Connected:", res.address);
+      }
+    } catch (e) {
+      console.error("Error connecting to Cartridge:", e);
+    }
+  };
+  
+
+
+  useEffect(() => {
+    controller.username()?.then((n) => setUsername(n));
+    
+  }, [controller]);
+
+
+
+
+
+
+
 
   return (
     <main className="flex items-center h-auto overflow-y-hidden">
@@ -159,7 +212,7 @@ export default function Home() {
 
               <div className="py-5 pt-8 w-full">
                 <button
-                  onClick={handleSubmit}
+                  onClick={ options.parentWallet == "controller" ? connectCatridge : handleSubmit}
                   className="w-full text-[#F9F9F9] font-poppins bg-[#272727] rounded-lg text-base h-[46px] border-[#272727] outline-none p-2"
                 >
                   Connect account
