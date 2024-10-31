@@ -45,7 +45,6 @@ export default function Home() {
 
 
 
-  const [username, setUsername] = useState<string>();
   const [connectedController, setConnectedController] = useState<AccountInterface>();
 
 
@@ -143,14 +142,7 @@ export default function Home() {
 
   const disconnectCatridgeController = async () => {
     await controller.disconnect();
-    setUsername(undefined)
   };
-
-
-
-  useEffect(() => {
-    controller.username()?.then((n) => setUsername(n));
-  }, [controller]);
 
 
 
