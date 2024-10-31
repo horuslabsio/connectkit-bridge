@@ -1,6 +1,7 @@
 "use client";
 import Controller from "@cartridge/controller";
 import { useEffect, useState } from "react";
+import { AccountInterface } from "starknet";
 
 interface TokenboundOptions {
   address: string;
@@ -25,26 +26,28 @@ export default function Home() {
 
 
   const ETH_CONTRACT =
-  "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7";
+    "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7";
 
-const controller = new Controller({
-  policies: [
-    {
-      target: ETH_CONTRACT,
-      method: "approve",
-      description:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-    },
-    {
-      target: ETH_CONTRACT,
-      method: "transfer",
-    },
-  ],
-});
+  const controller = new Controller({
+    policies: [
+      {
+        target: ETH_CONTRACT,
+        method: "approve",
+        description:
+          "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+      },
+      {
+        target: ETH_CONTRACT,
+        method: "transfer",
+      },
+    ],
+  });
 
 
 
   const [username, setUsername] = useState<string>();
+  const [connectedController, setConnectedController] = useState<AccountInterface>();
+
 
 
 
@@ -72,6 +75,11 @@ const controller = new Controller({
     }));
   };
 
+
+  function makeSerializable(obj: any) {
+    return JSON.parse(JSON.stringify(obj));
+  }
+
   const handleSubmit = () => {
     const newErrors = {
       address:
@@ -87,8 +95,22 @@ const controller = new Controller({
       return;
     }
 
-    window.parent.postMessage(options, "*");
+    let message = {
+      ...makeSerializable(options),
+      controller: makeSerializable(connectedController)
+    }
+
+
+    console.log(message, "message")
+
+    window.parent.postMessage(message, "*");
   };
+
+
+
+
+
+
 
   const wallets: WalletIds[] = [
     {
@@ -110,29 +132,47 @@ const controller = new Controller({
   ];
 
 
-  const connectCatridge = async () => {
+  const connectCatridgeController = async () => {
     try {
-      console.log("Connecting to Cartridge...",  await document.hasStorageAccess());
       const res = await controller.connect();
       if (res) {
-        console.log("Connected:", res.address);
+        setConnectedController(res)
       }
     } catch (e) {
-      console.error("Error connecting to Cartridge:", e);
     }
   };
-  
+
+
+  const disconnectCatridgeController = async () => {
+    await controller.disconnect();
+    setUsername(undefined)
+  };
+
 
 
   useEffect(() => {
     controller.username()?.then((n) => setUsername(n));
-    
   }, [controller]);
 
 
 
+  useEffect(() => {
+    const autoConnect = async () => {
+      if (options.parentWallet === "controller" && await controller.probe()) {
+        await connectCatridgeController();
+        // return () => clearTimeout(disconnectTimeout);
+      }
+    };
+    autoConnect();
+  }, [options]);
 
 
+
+  useEffect(() => {
+    if (options.parentWallet == "controller" && connectedController) {
+      handleSubmit()
+    }
+  }, [connectedController, options])
 
 
 
@@ -176,18 +216,16 @@ const controller = new Controller({
                 name="address"
                 value={options.address}
                 onChange={handleChange}
-                className={`w-full border font-poppins text-sm bg-white text-black h-[50px] font-normal rounded-[4px] px-3 py-2 mb-1 placeholder:text-gray-500 focus:outline-none focus:border-blue-500 ${
-                  errors.address ? "border-red-500" : "border-[#C7C7C7]"
-                }`}
+                className={`w-full border font-poppins text-sm bg-white text-black h-[50px] font-normal rounded-[4px] px-3 py-2 mb-1 placeholder:text-gray-500 focus:outline-none focus:border-blue-500 ${errors.address ? "border-red-500" : "border-[#C7C7C7]"
+                  }`}
               />
               {errors.address && (
                 <p className="text-red-500 text-sm">{errors.address}</p>
               )}
 
               <div
-                className={`w-full border text-sm bg-white text-black h-[50px] font-normal rounded-[4px] px-3 py-2 mb-1 placeholder:text-gray-500 focus:outline-none ${
-                  errors.parentWallet ? "border-red-500" : "border-[#C7C7C7]"
-                }`}
+                className={`w-full border text-sm bg-white text-black h-[50px] font-normal rounded-[4px] px-3 py-2 mb-1 placeholder:text-gray-500 focus:outline-none ${errors.parentWallet ? "border-red-500" : "border-[#C7C7C7]"
+                  }`}
               >
                 <select
                   id="options"
@@ -212,7 +250,7 @@ const controller = new Controller({
 
               <div className="py-5 pt-8 w-full">
                 <button
-                  onClick={ options.parentWallet == "controller" ? connectCatridge : handleSubmit}
+                  onClick={options.parentWallet == "controller" ? connectCatridgeController : handleSubmit}
                   className="w-full text-[#F9F9F9] font-poppins bg-[#272727] rounded-lg text-base h-[46px] border-[#272727] outline-none p-2"
                 >
                   Connect account
