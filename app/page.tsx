@@ -101,8 +101,6 @@ export default function Home() {
       controller: makeSerializable(connectedController)
     }
 
-    console.log(message)
-
 
     window.parent.postMessage(message, "*");
   };
