@@ -74,8 +74,12 @@ export default function Home() {
 
 
   function makeSerializable(obj: any) {
-    return JSON.parse(JSON.stringify(obj));
+    return JSON.parse(JSON.stringify(obj, (key, value) => 
+      value === undefined ? null : value
+    ));
   }
+  
+
 
   const handleSubmit = () => {
     const newErrors = {
@@ -97,8 +101,8 @@ export default function Home() {
       controller: makeSerializable(connectedController)
     }
 
+    console.log(message)
 
-    console.log(message, "message")
 
     window.parent.postMessage(message, "*");
   };
@@ -160,9 +164,12 @@ export default function Home() {
 
   useEffect(() => {
     if (options.parentWallet == "controller" && connectedController) {
+
       handleSubmit()
     }
   }, [connectedController, options])
+
+
 
 
 
