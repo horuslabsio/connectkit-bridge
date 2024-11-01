@@ -45,7 +45,6 @@ export default function Home() {
 
 
 
-  const [username, setUsername] = useState<string>();
   const [connectedController, setConnectedController] = useState<AccountInterface>();
 
 
@@ -75,8 +74,12 @@ export default function Home() {
 
 
   function makeSerializable(obj: any) {
-    return JSON.parse(JSON.stringify(obj));
+    return JSON.parse(JSON.stringify(obj, (key, value) => 
+      value === undefined ? null : value
+    ));
   }
+  
+
 
   const handleSubmit = () => {
     const newErrors = {
@@ -98,8 +101,8 @@ export default function Home() {
       controller: makeSerializable(connectedController)
     }
 
+    console.log(message)
 
-    console.log(message, "message")
 
     window.parent.postMessage(message, "*");
   };
@@ -143,14 +146,7 @@ export default function Home() {
 
   const disconnectCatridgeController = async () => {
     await controller.disconnect();
-    setUsername(undefined)
   };
-
-
-
-  useEffect(() => {
-    controller.username()?.then((n) => setUsername(n));
-  }, [controller]);
 
 
 
@@ -168,9 +164,12 @@ export default function Home() {
 
   useEffect(() => {
     if (options.parentWallet == "controller" && connectedController) {
+
       handleSubmit()
     }
   }, [connectedController, options])
+
+
 
 
 
