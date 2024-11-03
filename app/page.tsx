@@ -101,7 +101,6 @@ export default function Home() {
       controller: makeSerializable(connectedController)
     }
 
-
     window.parent.postMessage(message, "*");
   };
 
@@ -136,7 +135,6 @@ export default function Home() {
       const res = await controller.connect();
       console.log(res)
       if (res) {
-        console.log(res, "res")
         setConnectedController(res)
       }
     } catch (e) {
@@ -164,14 +162,12 @@ export default function Home() {
 
   useEffect(() => {
     if (options.parentWallet == "controller" && connectedController) {
-
       handleSubmit()
     }
   }, [connectedController, options])
 
 
 
-console.log(connectedController, 'connected controler')
 
   return (
     <main className="h-screen w-screen grid place-content-center overflow-y-hidden">
