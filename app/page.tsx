@@ -133,7 +133,6 @@ export default function Home() {
   const connectCatridgeController = async () => {
     try {
       const res = await controller.connect();
-      console.log(res)
       if (res) {
         setConnectedController(res)
       }
