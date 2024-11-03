@@ -134,7 +134,9 @@ export default function Home() {
   const connectCatridgeController = async () => {
     try {
       const res = await controller.connect();
+      console.log(res)
       if (res) {
+        console.log(res, "res")
         setConnectedController(res)
       }
     } catch (e) {
@@ -169,7 +171,7 @@ export default function Home() {
 
 
 
-
+console.log(connectedController, 'connected controler')
 
   return (
     <main className="h-screen w-screen grid place-content-center overflow-y-hidden">
