@@ -2,8 +2,6 @@
 import Controller from "@cartridge/controller";
 import { useEffect, useState } from "react";
 import TBALOGO from "./components/tba-logo";
-import { AccountInterface } from "starknet";
-
 
 interface TokenboundOptions {
   address: string;
@@ -44,11 +42,7 @@ export default function Home() {
     ],
   });
 
-
-
-
-  const [connectedController, setConnectedController] = useState<AccountInterface>();
-
+  const [username, setUsername] = useState<string>();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -74,15 +68,6 @@ export default function Home() {
     }));
   };
 
-
-  function makeSerializable(obj: any) {
-    return JSON.parse(JSON.stringify(obj, (key, value) => 
-      value === undefined ? null : value
-    ));
-  }
-  
-
-
   const handleSubmit = () => {
     const newErrors = {
       address:
@@ -98,19 +83,8 @@ export default function Home() {
       return;
     }
 
-    let message = {
-      ...makeSerializable(options),
-      controller: makeSerializable(connectedController)
-    }
-
-    window.parent.postMessage(message, "*");
+    window.parent.postMessage(options, "*");
   };
-
-
-
-
-
-
 
   const wallets: WalletIds[] = [
     {
@@ -131,44 +105,24 @@ export default function Home() {
     },
   ];
 
-
-  const connectCatridgeController = async () => {
+  const connectCatridge = async () => {
     try {
+      console.log(
+        "Connecting to Cartridge...",
+        await document.hasStorageAccess()
+      );
       const res = await controller.connect();
       if (res) {
-        setConnectedController(res)
+        console.log("Connected:", res.address);
       }
     } catch (e) {
+      console.error("Error connecting to Cartridge:", e);
     }
   };
 
-
-  const disconnectCatridgeController = async () => {
-    await controller.disconnect();
-  };
-
-
-
   useEffect(() => {
-    const autoConnect = async () => {
-      if (options.parentWallet === "controller" && await controller.probe()) {
-        await connectCatridgeController();
-        // return () => clearTimeout(disconnectTimeout);
-      }
-    };
-    autoConnect();
-  }, [options]);
-
-
-
-  useEffect(() => {
-    if (options.parentWallet == "controller" && connectedController) {
-      handleSubmit()
-    }
-  }, [connectedController, options])
-
-
-
+    controller.username()?.then((n) => setUsername(n));
+  }, [controller]);
 
   return (
     <main className="h-screen w-screen flex items-center justify-center overflow-y-hidden">
@@ -194,7 +148,6 @@ export default function Home() {
                 wallet.
               </p>
             </div>
-
             <div className="md:mt-8 mt-4 flex flex-col gap-4 md:gap-6">
               <label htmlFor="tba-address" className="relative block">
                 <span className="sr-only">Tokenbound Account address</span>
@@ -232,10 +185,6 @@ export default function Home() {
                   className={`w-full border text-sm bg-white text-black font-normal rounded-[4px] px-3 py-2 mb-1 placeholder:text-gray-500 focus-within:outline-none focus-within:border-gray-500 ${
                     errors.parentWallet ? "border-red-500" : "border-[#C7C7C7]"
                   }`}
-
-     
-            
-
                 >
                   <select
                     id="options"
@@ -249,28 +198,23 @@ export default function Home() {
                     <option value="" disabled>
                       Select parent wallet
                     </option>
-
                     {wallets.map(({ id, label }) => (
                       <option key={id} value={id} className="capitalize">
                         {label}
                       </option>
-                
-
-                  ))}
-                </select>
-              </div>
-              {errors.parentWallet && (
-                <p className="text-red-500 text-sm">{errors.parentWallet}</p>
-              )}
-
-              <div className="py-5 pt-8 w-full">
-                <button
-                  onClick={options.parentWallet == "controller" ? connectCatridgeController : handleSubmit}
-                  className="w-full text-[#F9F9F9] font-poppins bg-[#272727] rounded-lg text-base h-[46px] border-[#272727] outline-none p-2"
-                >
-                  Connect account
-                </button>
+                    ))}
+                  </select>
                 </div>
+                {errors.parentWallet && (
+                  <p
+                    id="wallet-error"
+                    role="alert"
+                    className="text-red-500 absolute -top-4 right-2 text-xs"
+                    aria-live="assertive"
+                  >
+                    {errors.parentWallet} *
+                  </p>
+                )}
               </div>
             </div>
 
