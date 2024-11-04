@@ -10,24 +10,31 @@ import { CounterABi } from "../utils/abi";
 
 
 
-const contractAddress = "0x45f8e8b3d6ecf220d78fdc13a523ae8ecaa90581ee68baa958d8ba3181841e9";
+const contractAddress = "0x18ba8fe6834e089c09d62b3ff41e94f549a9797a7b93a1fb112ca9fbaf3959d";
+
+// const provider = new RpcProvider({
+//   nodeUrl: "https://starknet-sepolia.public.blastapi.io/rpc/v0_7",
+// })
+
+
+
+
 const provider = new RpcProvider({
-  nodeUrl: "https://starknet-sepolia.public.blastapi.io/rpc/v0_7",
+  nodeUrl: "https://starknet-mainnet.public.blastapi.io",
 })
 
 
-
 export default function Page() {
+
   const [connection, setConnection] = useState<
     null | undefined
   >(null);
+  
 
   const [address, setAddress] = useState<string>("");
   const [account, setAccount] = useState();
   const counterContract = new Contract(CounterABi, contractAddress, provider);
   const [count, setCount] = useState<number>(0)
-
-
 
 
 
@@ -38,6 +45,9 @@ export default function Page() {
           chainId: constants.NetworkName.SN_MAIN,
         },
       });
+
+      console.log(wallet, 'connected account')
+
       setConnection(wallet);
       setAccount(wallet?.account);
       setAddress(wallet?.selectedAddress)
@@ -62,10 +72,10 @@ export default function Page() {
 
 
   const setCounter = async () => {
-    const call = counterContract.populate("set_count", [20])
-    const res = await counterContract.set_count(call.calldata)
+    const call = counterContract.populate("increase_balance", [20])
+    const res = await counterContract.increase_balance(call.calldata)
     await provider.waitForTransaction(res?.transaction_hash)
-    const newCount = await counterContract.get_count()
+    const newCount = await counterContract.get_balance()
     setCount(newCount.toString())
 
   }
@@ -73,7 +83,7 @@ export default function Page() {
 
   useEffect(() => {
     const getCounter = async () => {
-      const counter = await counterContract.get_count()
+      const counter = await counterContract.get_balance()
       setCount(counter.toString())
 
     }
@@ -81,7 +91,6 @@ export default function Page() {
   }, [])
 
 
-  console.log(account, 'connected account')
 
   return (
     <div className="flex flex-col items-center justify-center h-[100vh] ">
