@@ -1,6 +1,7 @@
 "use client";
 import Controller from "@cartridge/controller";
 import { useEffect, useState } from "react";
+import TBALOGO from "./components/tba-logo";
 
 interface TokenboundOptions {
   address: string;
@@ -124,90 +125,110 @@ export default function Home() {
   }, [controller]);
 
   return (
-    <main className="h-screen w-screen grid place-content-center overflow-y-hidden">
-      <div className="bg-overlay w-full h-full max-w-[840px] max-h-[540px] rounded-[14px] md:rounded-[24px] md:flex">
-        <div className="hidden basis-1/2 md:flex flex-col items-center md:py-[250px] h-full">
-          <div className="flex items-center gap-2 justify-center">
-            <div className="w-5 h-5">
-              <img
-                className="object-cover w-full h-full"
-                src="/logo.png"
-                alt="logo"
-              />
-            </div>
-            <h1 className="text-[16px] font-poppins font-medium text-[#F0F0F0]">
-              Connect Account
-            </h1>
+    <main className="h-screen w-screen flex items-center justify-center overflow-y-hidden">
+      <div className="bg-overlay bg-left w-full max-w-[400px] md:max-w-[650px] font-poppins border border-gray-500 h-[65%] max-h-[450px] md:max-h-[420px] overflow-clip rounded-[14px] md:rounded-[24px] flex flex-col justify-between md:flex-row">
+        <div className="md:basis-[40%] basis-[20%] p-4 w-full rounded-[14px] flex flex-col gap-4 justify-center items-center">
+          <div className="md:w-[70px] w-[50px] relative before:content-[''] before:w-[60%] before:absolute before:left-1/2 before:-translate-x-1/2 before:h-[65%] before:top-1/2 before:rounded-full before:-translate-y-1/2  before:bg-white">
+            <TBALOGO />
           </div>
-          <p className="text-[27px] font-poppins font-bold leading-[40px] text-[#F0F0F0]">
-            Tokenbound Account
-          </p>
+          <div>
+            <p className="text-base md:text-lg font-medium text-[#F0F0F0]">
+              Connect Account
+            </p>
+          </div>
         </div>
-        <div className="bg-white basis-1/2 grid place-content-center rounded-[14px] md:rounded-[24px]">
+        <div className="bg-white flex-1 md:basis-[60%] flex h-full items-center justify-center rounded-[14px] md:rounded-[24px]">
           <div className="p-4">
-            <div className="space-y-1">
-              <p className="text-[#1E1E1E] font-poppins text-[18px] font-semibold leading-[30px]">
-                Connect Your Tokenbound Account
-              </p>
-              <p className="text-[#7E7E7E] font-poppins text-[14px] font-normal leading-[21px]">
+            <div>
+              <h1 className="text-[#1E1E1E] text-lg md:text-xl font-semibold mb-2">
+                Connect Tokenbound Account
+              </h1>
+              <p className="text-[#7E7E7E] text-xs md:text-sm ">
                 Provide your Tokenbound account address and select its parent
                 wallet.
               </p>
             </div>
-            <div className="pt-[40px] space-y-3">
-              <input
-                type="text"
-                placeholder="Account address"
-                id="tba-address"
-                name="address"
-                value={options.address}
-                onChange={handleChange}
-                className={`w-full border font-poppins text-sm bg-white text-black h-[50px] font-normal rounded-[4px] px-3 py-2 mb-1 placeholder:text-gray-500 focus:outline-none focus:border-blue-500 ${
-                  errors.address ? "border-red-500" : "border-[#C7C7C7]"
-                }`}
-              />
-              {errors.address && (
-                <p className="text-red-500 text-sm">{errors.address}</p>
-              )}
+            <div className="md:mt-8 mt-4 flex flex-col gap-4 md:gap-6">
+              <label htmlFor="tba-address" className="relative block">
+                <span className="sr-only">Tokenbound Account address</span>
+                <input
+                  autoFocus
+                  type="text"
+                  placeholder="Account address"
+                  id="tba-address"
+                  name="address"
+                  value={options.address}
+                  onChange={handleChange}
+                  aria-invalid={!!errors.address}
+                  aria-describedby="address-error"
+                  className={`w-full border text-sm bg-white text-black font-normal rounded-[4px] px-3 py-2 mb-1 placeholder:text-gray-500 focus:outline-none focus:border-gray-500 ${
+                    errors.address ? "border-red-500" : "border-[#C7C7C7]"
+                  }`}
+                />
+                {errors.address && (
+                  <p
+                    id="address-error"
+                    role="alert"
+                    className="text-red-500 absolute -top-4 right-2 text-xs"
+                    aria-live="assertive"
+                  >
+                    {errors.address} *
+                  </p>
+                )}
+              </label>
 
-              <div
-                className={`w-full border text-sm bg-white text-black h-[50px] font-normal rounded-[4px] px-3 py-2 mb-1 placeholder:text-gray-500 focus:outline-none ${
-                  errors.parentWallet ? "border-red-500" : "border-[#C7C7C7]"
-                }`}
-              >
-                <select
-                  id="options"
-                  name="parentWallet"
-                  value={options.parentWallet}
-                  onChange={handleSelectChange}
-                  className="w-full h-full focus:outline-none font-poppins "
+              <div className="relative">
+                <label htmlFor="options" className="sr-only">
+                  Parent Wallet
+                </label>
+                <div
+                  className={`w-full border text-sm bg-white text-black font-normal rounded-[4px] px-3 py-2 mb-1 placeholder:text-gray-500 focus-within:outline-none focus-within:border-gray-500 ${
+                    errors.parentWallet ? "border-red-500" : "border-[#C7C7C7]"
+                  }`}
                 >
-                  <option value="" disabled>
-                    Select an option
-                  </option>
-                  {wallets.map(({ id, label }) => (
-                    <option key={id} value={id} className="capitalize">
-                      {label}
+                  <select
+                    id="options"
+                    name="parentWallet"
+                    value={options.parentWallet}
+                    onChange={handleSelectChange}
+                    aria-invalid={!!errors.parentWallet}
+                    aria-describedby="wallet-error"
+                    className="w-full h-full focus:outline-none"
+                  >
+                    <option value="" disabled>
+                      Select parent wallet
                     </option>
-                  ))}
-                </select>
+                    {wallets.map(({ id, label }) => (
+                      <option key={id} value={id} className="capitalize">
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                {errors.parentWallet && (
+                  <p
+                    id="wallet-error"
+                    role="alert"
+                    className="text-red-500 absolute -top-4 right-2 text-xs"
+                    aria-live="assertive"
+                  >
+                    {errors.parentWallet} *
+                  </p>
+                )}
               </div>
-              {errors.parentWallet && (
-                <p className="text-red-500 text-sm">{errors.parentWallet}</p>
-              )}
+            </div>
 
-              <div className="py-5 pt-8 w-full">
-                <button
-                  onClick={
-                    options.parentWallet == "controller"
-                      ? connectCatridge
-                      : handleSubmit
-                  }
-                  className="w-full text-[#F9F9F9] font-poppins bg-[#272727] rounded-lg text-base h-[46px] border-[#272727] outline-none p-2"
-                >
-                  Connect account
-                </button>
-              </div>
+            <div className="w-full mt-4 md:mt-8">
+              <button
+                onClick={
+                  options.parentWallet == "controller"
+                    ? connectCatridge
+                    : handleSubmit
+                }
+                className="w-full text-[#F9F9F9]  bg-[#272727] rounded-lg text-sm md:text-base  border-[#272727] outline-none p-2"
+              >
+                Connect account
+              </button>
             </div>
           </div>
         </div>
