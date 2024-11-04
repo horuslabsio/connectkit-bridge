@@ -2,6 +2,7 @@
 import Controller from "@cartridge/controller";
 import { useEffect, useState } from "react";
 import TBALOGO from "./components/tba-logo";
+import CloseIcon from "./components/close-icon";
 
 interface TokenboundOptions {
   address: string;
@@ -124,10 +125,21 @@ export default function Home() {
     controller.username()?.then((n) => setUsername(n));
   }, [controller]);
 
+  const closeModal = () => {
+    window.parent.postMessage({ action: "closeConnectKit" }, "*");
+  };
+
   return (
     <main className="h-screen w-screen flex items-center justify-center overflow-y-hidden">
       <div className="bg-overlay bg-left w-full max-w-[400px] md:max-w-[650px] font-poppins border border-gray-500 h-[65%] max-h-[450px] md:max-h-[420px] overflow-clip rounded-[14px] md:rounded-[24px] flex flex-col justify-between md:flex-row">
-        <div className="md:basis-[40%] basis-[20%] p-4 w-full rounded-[14px] flex flex-col gap-4 justify-center items-center">
+        <div className="md:basis-[40%] basis-[20%] p-4 w-full relative rounded-[14px] flex flex-col gap-4 justify-center items-center">
+          <button
+            id="close-button"
+            onClick={closeModal}
+            className="absolute left-4 top-4 text-white text-xl"
+          >
+            <CloseIcon />
+          </button>
           <div className="md:w-[70px] w-[50px] relative before:content-[''] before:w-[60%] before:absolute before:left-1/2 before:-translate-x-1/2 before:h-[65%] before:top-1/2 before:rounded-full before:-translate-y-1/2  before:bg-white">
             <TBALOGO />
           </div>
