@@ -9,11 +9,10 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        poppins: ['Poppins', 'sans-serif'],
-
+        poppins: ["Poppins", "sans-serif"],
       },
       backgroundImage: {
-        "overlay": "url('/bg.png')",
+        overlay: "url('/bg.png')",
       },
     },
   },

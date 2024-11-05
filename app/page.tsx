@@ -1,8 +1,10 @@
+// @ts-nocheck
 "use client";
 import Controller from "@cartridge/controller";
 import { useEffect, useState } from "react";
 import TBALOGO from "./components/tba-logo";
 import CloseIcon from "./components/close-icon";
+import DownChevronIcon from "./components/down-chevron-icon";
 
 interface TokenboundOptions {
   address: string;
@@ -110,7 +112,7 @@ export default function Home() {
     try {
       console.log(
         "Connecting to Cartridge...",
-        await document.hasStorageAccess()
+        await document.hasStorageAccess(),
       );
       const res = await controller.connect();
       if (res) {
@@ -129,38 +131,82 @@ export default function Home() {
     window.parent.postMessage({ action: "closeConnectKit" }, "*");
   };
 
+  interface MessageData {
+    id: number;
+    property: string;
+    args?: any[];
+  }
+
+  class Account {
+    balance: number;
+
+    constructor(balance: number) {
+      this.balance = balance;
+    }
+
+    getBalance() {
+      return `Balance: ${this.balance}`;
+    }
+  }
+
+  // Create an instance of Account
+  const account = new Account(100);
+
+  // Listen for requests from the parent
+  window.addEventListener("message", (event) => {
+    if (event.origin !== "https://your-parent-origin.com") return;
+
+    const { id, property, args } = event.data;
+
+    if (property && id !== undefined) {
+      let result;
+
+      try {
+        result =
+          typeof account[property] === "function"
+            ? account[property](...args) // Call the method with arguments if it's a function
+            : account[property]; // Otherwise, just get the property value
+      } catch (error) {
+        result = `Error: ${error}`;
+      }
+
+      // Send the result back to the parent
+      event.source?.postMessage({ id, result }, event.origin);
+    }
+  });
+
   return (
-    <main className="h-screen w-screen flex items-center justify-center overflow-y-hidden">
-      <div className="bg-overlay bg-left w-full max-w-[400px] md:max-w-[650px] font-poppins border border-gray-500 h-[65%] max-h-[450px] md:max-h-[420px] overflow-clip rounded-[14px] md:rounded-[24px] flex flex-col justify-between md:flex-row">
-        <div className="md:basis-[40%] basis-[20%] p-4 w-full relative rounded-[14px] flex flex-col gap-4 justify-center items-center">
+    <main className="flex h-screen w-screen items-center justify-center">
+      <div className="flex h-[65%] max-h-[450px] w-full max-w-[400px] flex-col justify-between rounded-[14px] border border-gray-500 bg-overlay bg-cover bg-left bg-no-repeat font-poppins md:max-h-[420px] md:max-w-[650px] md:flex-row md:rounded-[24px]">
+        <div className="relative flex w-full basis-[20%] flex-col items-center justify-center gap-4 rounded-[14px] p-4 md:basis-[40%]">
           <button
             id="close-button"
             onClick={closeModal}
-            className="absolute left-4 top-4 text-white text-xl"
+            className="absolute left-4 top-4 text-xl text-white"
           >
             <CloseIcon />
           </button>
-          <div className="md:w-[70px] w-[50px] relative before:content-[''] before:w-[60%] before:absolute before:left-1/2 before:-translate-x-1/2 before:h-[65%] before:top-1/2 before:rounded-full before:-translate-y-1/2  before:bg-white">
+          <div className="relative w-[50px] before:absolute before:left-1/2 before:top-1/2 before:h-[65%] before:w-[60%] before:-translate-x-1/2 before:-translate-y-1/2 before:rounded-full before:bg-white before:content-[''] md:w-[70px]">
             <TBALOGO />
           </div>
           <div>
-            <p className="text-base md:text-lg font-medium text-[#F0F0F0]">
+            <p className="text-base font-medium text-[#F0F0F0] md:text-lg">
               Connect Account
             </p>
           </div>
         </div>
-        <div className="bg-white flex-1 md:basis-[60%] flex h-full items-center justify-center rounded-[14px] md:rounded-[24px]">
+        <div className="flex h-full flex-1 items-center justify-center overflow-y-auto rounded-[14px] bg-white md:basis-[60%] md:rounded-[24px]">
           <div className="p-4">
             <div>
-              <h1 className="text-[#1E1E1E] text-lg md:text-xl font-semibold mb-2">
+              <h1 className="mb-2 text-lg font-semibold text-[#1E1E1E] md:text-xl">
                 Connect Tokenbound Account
               </h1>
-              <p className="text-[#7E7E7E] text-xs md:text-sm ">
+              <p className="text-xs text-[#7E7E7E] md:text-sm">
                 Provide your Tokenbound account address and select its parent
                 wallet.
               </p>
             </div>
-            <div className="md:mt-8 mt-4 flex flex-col gap-4 md:gap-6">
+            <div className="mt-4 flex flex-col gap-4 md:mt-8 md:gap-6">
               <label htmlFor="tba-address" className="relative block">
                 <span className="sr-only">Tokenbound Account address</span>
                 <input
@@ -173,7 +219,7 @@ export default function Home() {
                   onChange={handleChange}
                   aria-invalid={!!errors.address}
                   aria-describedby="address-error"
-                  className={`w-full border text-sm bg-white text-black font-normal rounded-[4px] px-3 py-2 mb-1 placeholder:text-gray-500 focus:outline-none focus:border-gray-500 ${
+                  className={`mb-1 w-full rounded-[4px] border bg-white px-3 py-2 text-sm font-normal text-black placeholder:text-gray-500 focus:border-gray-500 focus:outline-none ${
                     errors.address ? "border-red-500" : "border-[#C7C7C7]"
                   }`}
                 />
@@ -181,7 +227,7 @@ export default function Home() {
                   <p
                     id="address-error"
                     role="alert"
-                    className="text-red-500 absolute -top-4 right-2 text-xs"
+                    className="absolute -top-4 right-2 text-xs text-red-500"
                     aria-live="assertive"
                   >
                     {errors.address} *
@@ -194,10 +240,13 @@ export default function Home() {
                   Parent Wallet
                 </label>
                 <div
-                  className={`w-full border text-sm bg-white text-black font-normal rounded-[4px] px-3 py-2 mb-1 placeholder:text-gray-500 focus-within:outline-none focus-within:border-gray-500 ${
+                  className={`mb-1 w-full rounded-[4px] border bg-white px-3 py-2 text-sm font-normal text-black placeholder:text-gray-500 focus-within:border-gray-500 focus-within:outline-none ${
                     errors.parentWallet ? "border-red-500" : "border-[#C7C7C7]"
                   }`}
                 >
+                  <span aria-hidden className="absolute right-4 text-xl">
+                    <DownChevronIcon />
+                  </span>
                   <select
                     id="options"
                     name="parentWallet"
@@ -205,7 +254,7 @@ export default function Home() {
                     onChange={handleSelectChange}
                     aria-invalid={!!errors.parentWallet}
                     aria-describedby="wallet-error"
-                    className="w-full h-full focus:outline-none"
+                    className="h-full w-full appearance-none focus:outline-none"
                   >
                     <option value="" disabled>
                       Select parent wallet
@@ -221,7 +270,7 @@ export default function Home() {
                   <p
                     id="wallet-error"
                     role="alert"
-                    className="text-red-500 absolute -top-4 right-2 text-xs"
+                    className="absolute -top-4 right-2 text-xs text-red-500"
                     aria-live="assertive"
                   >
                     {errors.parentWallet} *
@@ -230,14 +279,14 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="w-full mt-4 md:mt-8">
+            <div className="mt-4 w-full md:mt-8">
               <button
                 onClick={
                   options.parentWallet == "controller"
                     ? connectCatridge
                     : handleSubmit
                 }
-                className="w-full text-[#F9F9F9]  bg-[#272727] rounded-lg text-sm md:text-base  border-[#272727] outline-none p-2"
+                className="w-full rounded-lg border-[#272727] bg-[#272727] p-2 text-sm text-[#F9F9F9] outline-none md:text-base"
               >
                 Connect account
               </button>
