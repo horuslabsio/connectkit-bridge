@@ -130,27 +130,6 @@ export default function Home() {
     window.parent.postMessage({ action: "closeConnectKit" }, "*");
   };
 
-  interface MessageData {
-    id: number;
-    property: string;
-    args?: any[];
-  }
-
-  class Account {
-    balance: number;
-
-    constructor(balance: number) {
-      this.balance = balance;
-    }
-
-    getBalance() {
-      return `Balance: ${this.balance}`;
-    }
-  }
-
-  // Create an instance of Account
-  const account = new Account(100);
-
   return (
     <main className="flex h-screen w-screen items-center justify-center">
       <div className="flex h-[65%] max-h-[450px] w-full max-w-[400px] flex-col justify-between rounded-[14px] border border-gray-500 bg-overlay bg-cover bg-left bg-no-repeat font-poppins md:max-h-[420px] md:max-w-[650px] md:flex-row md:rounded-[24px]">
