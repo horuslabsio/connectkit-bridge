@@ -153,27 +153,29 @@ export default function Home() {
   const account = new Account(100);
 
   // Listen for requests from the parent
-  window.addEventListener("message", (event) => {
-    if (event.origin !== "http://localhost:3000") return;
+  useEffect(() => {
+    window.addEventListener("message", (event) => {
+      if (event.origin !== "http://localhost:3000") return;
 
-    const { id, property, args } = event.data;
+      const { id, property, args } = event.data;
 
-    if (property && id !== undefined) {
-      let result;
+      if (property && id !== undefined) {
+        let result;
 
-      try {
-        result =
-          typeof account[property] === "function"
-            ? account[property](...args) // Call the method with arguments if it's a function
-            : account[property]; // Otherwise, just get the property value
-      } catch (error) {
-        result = `Error: ${error}`;
+        try {
+          result =
+            typeof account[property] === "function"
+              ? account[property](...args) // Call the method with arguments if it's a function
+              : account[property]; // Otherwise, just get the property value
+        } catch (error) {
+          result = `Error: ${error}`;
+        }
+
+        // Send the result back to the parent
+        event.source?.postMessage({ id, result }, event.origin);
       }
-
-      // Send the result back to the parent
-      event.source?.postMessage({ id, result }, event.origin);
-    }
-  });
+    });
+  }, []);
 
   return (
     <main className="flex h-screen w-screen items-center justify-center">
