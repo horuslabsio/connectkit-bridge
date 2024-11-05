@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import TBALOGO from "./components/tba-logo";
 import CloseIcon from "./components/close-icon";
 import { AccountInterface } from "starknet";
-import _ from "lodash";
 
 
 interface TokenboundOptions {
