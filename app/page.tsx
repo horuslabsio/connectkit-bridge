@@ -153,10 +153,10 @@ export default function Home() {
   const account = new Account(100);
 
   const serializedAccount = JSON.stringify(account);
-window.parent.postMessage({ account: serializedAccount }, '*');
 
   // Listen for requests from the parent
   useEffect(() => {
+window.parent.postMessage({ account: serializedAccount }, '*');
     // window.addEventListener("message", (event) => {
     //   // if (event.origin !== "http://localhost:3000") return;
 
