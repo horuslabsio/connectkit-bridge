@@ -154,7 +154,7 @@ export default function Home() {
 
   // Listen for requests from the parent
   window.addEventListener("message", (event) => {
-    if (event.origin !== "https://your-parent-origin.com") return;
+    if (event.origin !== "http://localhost:3000") return;
 
     const { id, property, args } = event.data;
 
