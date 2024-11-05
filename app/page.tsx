@@ -3,6 +3,9 @@ import Controller from "@cartridge/controller";
 import { useEffect, useState } from "react";
 import TBALOGO from "./components/tba-logo";
 import CloseIcon from "./components/close-icon";
+import { AccountInterface } from "starknet";
+import _ from "lodash";
+
 
 interface TokenboundOptions {
   address: string;
@@ -13,6 +16,31 @@ interface WalletIds {
   id: string;
   label: string;
 }
+
+
+const wallets: WalletIds[] = [
+  {
+    id: "braavos",
+    label: "Braavos",
+  },
+  {
+    id: "argentX",
+    label: "ArgentX",
+  },
+  {
+    id: "ArgentWebWallet",
+    label: "Argent Web Wallet",
+  },
+  {
+    id: "controller",
+    label: "Cartridge Controller",
+  },
+];
+
+
+const ETH_CONTRACT =
+  "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7";
+
 
 export default function Home() {
   const [options, setOptions] = useState<TokenboundOptions>({
@@ -25,25 +53,36 @@ export default function Home() {
     parentWallet: "",
   });
 
-  const ETH_CONTRACT =
-    "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7";
+  const [account, setAccount] = useState<AccountInterface | null>(null);
+
 
   const controller = new Controller({
     policies: [
       {
         target: ETH_CONTRACT,
-        method: "approve",
-        description:
-          "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+        method: 'approve',
+        description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.'
       },
       {
         target: ETH_CONTRACT,
-        method: "transfer",
+        method: 'transfer'
       },
+      {
+        target: ETH_CONTRACT,
+        method: 'mint'
+      },
+      {
+        target: ETH_CONTRACT,
+        method: 'burn'
+      },
+      {
+        target: ETH_CONTRACT,
+        method: 'allowance'
+      }
+
     ],
   });
 
-  const [username, setUsername] = useState<string>();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -68,66 +107,101 @@ export default function Home() {
       [name]: "",
     }));
   };
+  
 
-  const handleSubmit = () => {
+  async function connectCatridge() {
+
     const newErrors = {
-      address:
-        options.address.length === 0
-          ? "Please enter a valid tokenbound account address"
-          : "",
-      parentWallet:
-        options.parentWallet.length === 0 ? "Please select parent wallet" : "",
+      address: !options.address ? "Please enter a valid tokenbound account address" : "",
+      parentWallet: !options.parentWallet ? "Please select parent wallet" : "",
     };
 
     setErrors(newErrors);
-    if (newErrors.address || newErrors.parentWallet) {
-      return;
-    }
-
-    window.parent.postMessage(options, "*");
-  };
-
-  const wallets: WalletIds[] = [
-    {
-      id: "braavos",
-      label: "Braavos",
-    },
-    {
-      id: "argentX",
-      label: "ArgentX",
-    },
-    {
-      id: "ArgentWebWallet",
-      label: "Argent Web Wallet",
-    },
-    {
-      id: "controller",
-      label: "Cartridge Controller",
-    },
-  ];
-
-  const connectCatridge = async () => {
+    if (Object.values(newErrors).some(error => error)) return;
     try {
-      console.log(
-        "Connecting to Cartridge...",
-        await document.hasStorageAccess()
-      );
+      await controller.probe()
       const res = await controller.connect();
       if (res) {
-        console.log("Connected:", res.address);
+
+        setAccount(res);
+        const payload = {
+          ...options,
+          controller: controller
+        }
+    
+        setTimeout(() => {
+          window.parent.postMessage(payload , "*");
+        }, 0);
+
       }
-    } catch (e) {
-      console.error("Error connecting to Cartridge:", e);
+    } catch (error) {
+      alert("Failed to connect to! Please try again")
+      console.error("Failed to connect:", error);
+    }
+  }
+
+
+  async function autoConnect  () {
+    
+    try {
+      if (await controller.probe()) {
+        await connectCatridge();
+      }
+    } catch (error) {
+      console.error("Auto-connect failed:", error);
     }
   };
 
   useEffect(() => {
-    controller.username()?.then((n) => setUsername(n));
-  }, [controller]);
+    if(options.parentWallet != "controller") return 
+    autoConnect();
+  }, [options]);
+
 
   const closeModal = () => {
     window.parent.postMessage({ action: "closeConnectKit" }, "*");
   };
+
+
+  function disconnect() {
+    controller.disconnect();
+    setAccount(null);
+  }
+
+
+  const handleSubmit = () => {
+    const newErrors = {
+      address: !options.address ? "Please enter a valid tokenbound account address" : "",
+      parentWallet: !options.parentWallet ? "Please select parent wallet" : "",
+    };
+
+    setErrors(newErrors);
+
+    if (Object.values(newErrors).some(error => error)) return;
+
+      const payload = {
+        ...options,
+        controller: null,
+        account: null
+      }
+  
+      setTimeout(() => {
+        window.parent.postMessage(payload, "*");
+      }, 0);
+    
+  };
+
+  // useEffect(() => {
+  //   const handleMessage = ({ origin, data }: any) => {
+    
+  //       console.log("Data received from child:", data);
+  //   };
+
+  //   window.addEventListener("message", handleMessage);
+  //   return () => window.removeEventListener("message", handleMessage);
+  // }, []);
+
+
 
   return (
     <main className="h-screen w-screen flex items-center justify-center overflow-y-hidden">
@@ -173,9 +247,8 @@ export default function Home() {
                   onChange={handleChange}
                   aria-invalid={!!errors.address}
                   aria-describedby="address-error"
-                  className={`w-full border text-sm bg-white text-black font-normal rounded-[4px] px-3 py-2 mb-1 placeholder:text-gray-500 focus:outline-none focus:border-gray-500 ${
-                    errors.address ? "border-red-500" : "border-[#C7C7C7]"
-                  }`}
+                  className={`w-full border text-sm bg-white text-black font-normal rounded-[4px] px-3 py-2 mb-1 placeholder:text-gray-500 focus:outline-none focus:border-gray-500 ${errors.address ? "border-red-500" : "border-[#C7C7C7]"
+                    }`}
                 />
                 {errors.address && (
                   <p
@@ -194,9 +267,8 @@ export default function Home() {
                   Parent Wallet
                 </label>
                 <div
-                  className={`w-full border text-sm bg-white text-black font-normal rounded-[4px] px-3 py-2 mb-1 placeholder:text-gray-500 focus-within:outline-none focus-within:border-gray-500 ${
-                    errors.parentWallet ? "border-red-500" : "border-[#C7C7C7]"
-                  }`}
+                  className={`w-full border text-sm bg-white text-black font-normal rounded-[4px] px-3 py-2 mb-1 placeholder:text-gray-500 focus-within:outline-none focus-within:border-gray-500 ${errors.parentWallet ? "border-red-500" : "border-[#C7C7C7]"
+                    }`}
                 >
                   <select
                     id="options"
@@ -230,17 +302,25 @@ export default function Home() {
               </div>
             </div>
 
+            {
+              account  && <button onClick={disconnect}>disconnect</button>
+            }
+
             <div className="w-full mt-4 md:mt-8">
-              <button
-                onClick={
-                  options.parentWallet == "controller"
-                    ? connectCatridge
-                    : handleSubmit
-                }
-                className="w-full text-[#F9F9F9]  bg-[#272727] rounded-lg text-sm md:text-base  border-[#272727] outline-none p-2"
-              >
-                Connect account
-              </button>
+              {
+                options.parentWallet == "controller" ? <button
+                  onClick={connectCatridge}
+                  className="w-full text-[#F9F9F9]  bg-[#272727] rounded-lg text-sm md:text-base  border-[#272727] outline-none p-2"
+                >
+                  Connect account
+                </button> : <button
+                  onClick={handleSubmit}
+                  className="w-full text-[#F9F9F9]  bg-[#272727] rounded-lg text-sm md:text-base  border-[#272727] outline-none p-2"
+                >
+                  Connect account
+                </button>
+              }
+
             </div>
           </div>
         </div>
