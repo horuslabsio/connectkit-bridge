@@ -155,7 +155,7 @@ export default function Home() {
   // Listen for requests from the parent
   useEffect(() => {
     window.addEventListener("message", (event) => {
-      if (event.origin !== "http://localhost:3000") return;
+      // if (event.origin !== "http://localhost:3000") return;
 
       const { id, property, args } = event.data;
 
