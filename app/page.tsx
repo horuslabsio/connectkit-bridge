@@ -152,29 +152,42 @@ export default function Home() {
   // Create an instance of Account
   const account = new Account(100);
 
+  const serializedAccount = JSON.stringify(account);
+window.parent.postMessage({ account: serializedAccount }, '*');
+
   // Listen for requests from the parent
   useEffect(() => {
-    window.addEventListener("message", (event) => {
-      // if (event.origin !== "http://localhost:3000") return;
+    // window.addEventListener("message", (event) => {
+    //   // if (event.origin !== "http://localhost:3000") return;
 
-      const { id, property, args } = event.data;
+    //   const { id, property, args } = event.data;
 
-      if (property && id !== undefined) {
-        let result;
+    //   if (property && id !== undefined) {
+    //     let result;
 
-        try {
-          result =
-            typeof account[property] === "function"
-              ? account[property](...args) // Call the method with arguments if it's a function
-              : account[property]; // Otherwise, just get the property value
-        } catch (error) {
-          result = `Error: ${error}`;
-        }
+    //     try {
+    //       result =
+    //         typeof account[property] === "function"
+    //           ? account[property](...args) // Call the method with arguments if it's a function
+    //           : account[property]; // Otherwise, just get the property value
+    //     } catch (error) {
+    //       result = `Error: ${error}`;
+    //     }
 
-        // Send the result back to the parent
-        event.source?.postMessage({ id, result }, event.origin);
-      }
-    });
+    //     // Send the result back to the parent
+    //     event.source?.postMessage({ id, result }, event.origin);
+    //   }
+    // });
+    window.addEventListener('message', (event) => {
+  if (event.origin !== 'https://your-iframe-origin.com') return;
+
+  const { account: serializedAccount } = event.data;
+  if (serializedAccount) {
+    const accountData = JSON.parse(serializedAccount);
+    const account = Object.assign(new Account(0), accountData); // Rehydrate
+    console.log(account.getBalance()); // Should work as expected
+  }
+});
   }, []);
 
   return (
