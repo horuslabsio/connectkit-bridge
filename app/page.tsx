@@ -1,4 +1,3 @@
-// @ts-nocheck
 "use client";
 import Controller from "@cartridge/controller";
 import { useEffect, useState } from "react";
@@ -130,52 +129,6 @@ export default function Home() {
   const closeModal = () => {
     window.parent.postMessage({ action: "closeConnectKit" }, "*");
   };
-
-  interface MessageData {
-    id: number;
-    property: string;
-    args?: any[];
-  }
-
-  class Account {
-    balance: number;
-
-    constructor(balance: number) {
-      this.balance = balance;
-    }
-
-    getBalance() {
-      return `Balance: ${this.balance}`;
-    }
-  }
-
-  // Create an instance of Account
-  const account = new Account(100);
-
-  // Listen for requests from the parent
-  useEffect(() => {
-    window.addEventListener("message", (event) => {
-      // if (event.origin !== "http://localhost:3000") return;
-
-      const { id, property, args } = event.data;
-
-      if (property && id !== undefined) {
-        let result;
-
-        try {
-          result =
-            typeof account[property] === "function"
-              ? account[property](...args) // Call the method with arguments if it's a function
-              : account[property]; // Otherwise, just get the property value
-        } catch (error) {
-          result = `Error: ${error}`;
-        }
-
-        // Send the result back to the parent
-        event.source?.postMessage({ id, result }, event.origin);
-      }
-    });
-  }, []);
 
   return (
     <main className="flex h-screen w-screen items-center justify-center">
