@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Controller from "@cartridge/controller";
 import { AccountInterface } from "starknet";
-import { Button } from "@cartridge/ui-next";
 
 interface ConnectCatridgeProps {
   onAccountConnected: (account: AccountInterface) => void;
