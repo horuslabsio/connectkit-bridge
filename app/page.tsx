@@ -1,9 +1,7 @@
 "use client";
-import Controller from "@cartridge/controller";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import TBALOGO from "./components/tba-logo";
 import CloseIcon from "./components/close-icon";
-import { AccountInterface } from "starknet";
 
 
 interface TokenboundOptions {
@@ -52,37 +50,9 @@ export default function Home() {
     parentWallet: "",
   });
 
-  const [account, setAccount] = useState<AccountInterface | null>(null);
 
 
-  const controller = new Controller({
-    policies: [
-      {
-        target: ETH_CONTRACT,
-        method: 'approve',
-        description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.'
-      },
-      {
-        target: ETH_CONTRACT,
-        method: 'transfer'
-      },
-      {
-        target: ETH_CONTRACT,
-        method: 'mint'
-      },
-      {
-        target: ETH_CONTRACT,
-        method: 'burn'
-      },
-      {
-        target: ETH_CONTRACT,
-        method: 'allowance'
-      }
-
-    ],
-  });
-
-
+ 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setOptions((prevOptions) => ({
@@ -108,64 +78,12 @@ export default function Home() {
   };
   
 
-  async function connectCatridge() {
-
-    const newErrors = {
-      address: !options.address ? "Please enter a valid tokenbound account address" : "",
-      parentWallet: !options.parentWallet ? "Please select parent wallet" : "",
-    };
-
-    setErrors(newErrors);
-    if (Object.values(newErrors).some(error => error)) return;
-    try {
-      await controller.probe()
-      const res = await controller.connect();
-      if (res) {
-
-        setAccount(res);
-        const payload = {
-          ...options,
-          controller: controller
-        }
-    
-        setTimeout(() => {
-          window.parent.postMessage(payload , "*");
-        }, 0);
-
-      }
-    } catch (error) {
-      alert("Failed to connect to! Please try again")
-      console.error("Failed to connect:", error);
-    }
-  }
-
-
-  async function autoConnect  () {
-    
-    try {
-      if (await controller.probe()) {
-        await connectCatridge();
-      }
-    } catch (error) {
-      console.error("Auto-connect failed:", error);
-    }
-  };
-
-  useEffect(() => {
-    if(options.parentWallet != "controller") return 
-    autoConnect();
-  }, [options]);
-
 
   const closeModal = () => {
     window.parent.postMessage({ action: "closeConnectKit" }, "*");
   };
 
 
-  function disconnect() {
-    controller.disconnect();
-    setAccount(null);
-  }
 
 
   const handleSubmit = () => {
@@ -177,31 +95,14 @@ export default function Home() {
     setErrors(newErrors);
 
     if (Object.values(newErrors).some(error => error)) return;
-
-      const payload = {
-        ...options,
-        controller: null,
-        account: null
-      }
   
       setTimeout(() => {
-        window.parent.postMessage(payload, "*");
+        window.parent.postMessage(options, "*");
       }, 0);
     
   };
 
-  // useEffect(() => {
-  //   const handleMessage = ({ origin, data }: any) => {
-    
-  //       console.log("Data received from child:", data);
-  //   };
-
-  //   window.addEventListener("message", handleMessage);
-  //   return () => window.removeEventListener("message", handleMessage);
-  // }, []);
-
-
-
+  
   return (
     <main className="h-screen w-screen flex items-center justify-center overflow-y-hidden">
       <div className="bg-overlay bg-left w-full max-w-[400px] md:max-w-[650px] font-poppins border border-gray-500 h-[65%] max-h-[450px] md:max-h-[420px] overflow-clip rounded-[14px] md:rounded-[24px] flex flex-col justify-between md:flex-row">
@@ -301,24 +202,16 @@ export default function Home() {
               </div>
             </div>
 
-            {
-              account  && <button onClick={disconnect}>disconnect</button>
-            }
-
+            
             <div className="w-full mt-4 md:mt-8">
-              {
-                options.parentWallet == "controller" ? <button
-                  onClick={connectCatridge}
-                  className="w-full text-[#F9F9F9]  bg-[#272727] rounded-lg text-sm md:text-base  border-[#272727] outline-none p-2"
-                >
-                  Connect account
-                </button> : <button
+              
+           <button
                   onClick={handleSubmit}
                   className="w-full text-[#F9F9F9]  bg-[#272727] rounded-lg text-sm md:text-base  border-[#272727] outline-none p-2"
                 >
                   Connect account
                 </button>
-              }
+              
 
             </div>
           </div>
