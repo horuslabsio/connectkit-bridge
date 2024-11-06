@@ -1,8 +1,8 @@
 "use client";
-import Controller from "@cartridge/controller";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import TBALOGO from "./components/tba-logo";
 import CloseIcon from "./components/close-icon";
+
 
 interface TokenboundOptions {
   address: string;
@@ -13,6 +13,31 @@ interface WalletIds {
   id: string;
   label: string;
 }
+
+
+const wallets: WalletIds[] = [
+  {
+    id: "braavos",
+    label: "Braavos",
+  },
+  {
+    id: "argentX",
+    label: "ArgentX",
+  },
+  {
+    id: "ArgentWebWallet",
+    label: "Argent Web Wallet",
+  },
+  {
+    id: "controller",
+    label: "Cartridge Controller",
+  },
+];
+
+
+const ETH_CONTRACT =
+  "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7";
+
 
 export default function Home() {
   const [options, setOptions] = useState<TokenboundOptions>({
@@ -25,26 +50,9 @@ export default function Home() {
     parentWallet: "",
   });
 
-  const ETH_CONTRACT =
-    "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7";
 
-  const controller = new Controller({
-    policies: [
-      {
-        target: ETH_CONTRACT,
-        method: "approve",
-        description:
-          "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-      },
-      {
-        target: ETH_CONTRACT,
-        method: "transfer",
-      },
-    ],
-  });
 
-  const [username, setUsername] = useState<string>();
-
+ 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setOptions((prevOptions) => ({
@@ -68,67 +76,33 @@ export default function Home() {
       [name]: "",
     }));
   };
+  
 
-  const handleSubmit = () => {
-    const newErrors = {
-      address:
-        options.address.length === 0
-          ? "Please enter a valid tokenbound account address"
-          : "",
-      parentWallet:
-        options.parentWallet.length === 0 ? "Please select parent wallet" : "",
-    };
-
-    setErrors(newErrors);
-    if (newErrors.address || newErrors.parentWallet) {
-      return;
-    }
-
-    window.parent.postMessage(options, "*");
-  };
-
-  const wallets: WalletIds[] = [
-    {
-      id: "braavos",
-      label: "Braavos",
-    },
-    {
-      id: "argentX",
-      label: "ArgentX",
-    },
-    {
-      id: "ArgentWebWallet",
-      label: "Argent Web Wallet",
-    },
-    {
-      id: "controller",
-      label: "Cartridge Controller",
-    },
-  ];
-
-  const connectCatridge = async () => {
-    try {
-      console.log(
-        "Connecting to Cartridge...",
-        await document.hasStorageAccess()
-      );
-      const res = await controller.connect();
-      if (res) {
-        console.log("Connected:", res.address);
-      }
-    } catch (e) {
-      console.error("Error connecting to Cartridge:", e);
-    }
-  };
-
-  useEffect(() => {
-    controller.username()?.then((n) => setUsername(n));
-  }, [controller]);
 
   const closeModal = () => {
     window.parent.postMessage({ action: "closeConnectKit" }, "*");
   };
 
+
+
+
+  const handleSubmit = () => {
+    const newErrors = {
+      address: !options.address ? "Please enter a valid tokenbound account address" : "",
+      parentWallet: !options.parentWallet ? "Please select parent wallet" : "",
+    };
+
+    setErrors(newErrors);
+
+    if (Object.values(newErrors).some(error => error)) return;
+  
+      setTimeout(() => {
+        window.parent.postMessage(options, "*");
+      }, 0);
+    
+  };
+
+  
   return (
     <main className="h-screen w-screen flex items-center justify-center overflow-y-hidden">
       <div className="bg-overlay bg-left w-full max-w-[400px] md:max-w-[650px] font-poppins border border-gray-500 h-[65%] max-h-[450px] md:max-h-[420px] overflow-clip rounded-[14px] md:rounded-[24px] flex flex-col justify-between md:flex-row">
@@ -173,9 +147,8 @@ export default function Home() {
                   onChange={handleChange}
                   aria-invalid={!!errors.address}
                   aria-describedby="address-error"
-                  className={`w-full border text-sm bg-white text-black font-normal rounded-[4px] px-3 py-2 mb-1 placeholder:text-gray-500 focus:outline-none focus:border-gray-500 ${
-                    errors.address ? "border-red-500" : "border-[#C7C7C7]"
-                  }`}
+                  className={`w-full border text-sm bg-white text-black font-normal rounded-[4px] px-3 py-2 mb-1 placeholder:text-gray-500 focus:outline-none focus:border-gray-500 ${errors.address ? "border-red-500" : "border-[#C7C7C7]"
+                    }`}
                 />
                 {errors.address && (
                   <p
@@ -194,9 +167,8 @@ export default function Home() {
                   Parent Wallet
                 </label>
                 <div
-                  className={`w-full border text-sm bg-white text-black font-normal rounded-[4px] px-3 py-2 mb-1 placeholder:text-gray-500 focus-within:outline-none focus-within:border-gray-500 ${
-                    errors.parentWallet ? "border-red-500" : "border-[#C7C7C7]"
-                  }`}
+                  className={`w-full border text-sm bg-white text-black font-normal rounded-[4px] px-3 py-2 mb-1 placeholder:text-gray-500 focus-within:outline-none focus-within:border-gray-500 ${errors.parentWallet ? "border-red-500" : "border-[#C7C7C7]"
+                    }`}
                 >
                   <select
                     id="options"
@@ -230,17 +202,17 @@ export default function Home() {
               </div>
             </div>
 
+            
             <div className="w-full mt-4 md:mt-8">
-              <button
-                onClick={
-                  options.parentWallet == "controller"
-                    ? connectCatridge
-                    : handleSubmit
-                }
-                className="w-full text-[#F9F9F9]  bg-[#272727] rounded-lg text-sm md:text-base  border-[#272727] outline-none p-2"
-              >
-                Connect account
-              </button>
+              
+           <button
+                  onClick={handleSubmit}
+                  className="w-full text-[#F9F9F9]  bg-[#272727] rounded-lg text-sm md:text-base  border-[#272727] outline-none p-2"
+                >
+                  Connect account
+                </button>
+              
+
             </div>
           </div>
         </div>
