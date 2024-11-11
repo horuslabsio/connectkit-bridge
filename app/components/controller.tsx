@@ -13,6 +13,8 @@ const ETH_CONTRACT =
 
 const ConnectCatridge: React.FC<ConnectCatridgeProps> = ({ onAccountConnected }) => {
   const [account, setAccount] = useState<AccountInterface | null>(null);
+
+  
   const controller = new Controller({
     policies: [
       {
