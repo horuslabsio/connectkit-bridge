@@ -7,9 +7,6 @@ import {
 } from "tokenbound-connectkit-test";
 import { CounterABi } from "../utils/abi";
 
-
-
-
 const contractAddress = "0x18ba8fe6834e089c09d62b3ff41e94f549a9797a7b93a1fb112ca9fbaf3959d";
 
 // const provider = new RpcProvider({
@@ -17,26 +14,19 @@ const contractAddress = "0x18ba8fe6834e089c09d62b3ff41e94f549a9797a7b93a1fb112ca
 // })
 
 
-
-
 const provider = new RpcProvider({
-  nodeUrl: "https://starknet-mainnet.public.blastapi.io",
+  nodeUrl: "https://starknet-mainnet.public.blastapi.io/rpc/v0_7",
 })
 
-
 export default function Page() {
-
   const [connection, setConnection] = useState<
     null | undefined
   >(null);
-  
 
   const [address, setAddress] = useState<string>("");
   const [account, setAccount] = useState();
   const counterContract = new Contract(CounterABi, contractAddress, provider);
   const [count, setCount] = useState<number>(0)
-
-
 
   const connectFn = async () => {
     try {
@@ -46,7 +36,7 @@ export default function Page() {
         },
       });
 
-      console.log(wallet, 'connected account')
+      console.log(wallet, 'wallet')
 
       setConnection(wallet);
       setAccount(wallet?.account);
@@ -93,8 +83,8 @@ export default function Page() {
 
 
   return (
-    <div className="flex flex-col items-center justify-center h-[100vh] ">
-      <p className="py-2 text-[25px] font-bold"> Counter dApp &</p>
+    <div className="flex bg-black flex-col items-center justify-center h-[100vh] ">
+      <p className="py-2 text-white text-[35px] font-bold py-[40px]" > Simple Counter App</p>
 
       {!connection ? (
         <div>
@@ -103,14 +93,14 @@ export default function Page() {
           </button>
         </div>
       ) : (
-        <button className="" onClick={disconnectFn}>
+        <button  className="" onClick={disconnectFn}>
           Disconnect
         </button> 
       )}
 
       <header className="">
         {address && (
-          <p>
+          <p className="text-white">
             <b>Address: {address}</b>
           </p>
         )}
@@ -118,7 +108,7 @@ export default function Page() {
         <div className=" py-5">
 
           <div className=" py-5 flex items-center justify-center">
-            <p className="text-[20px]">Count: <span className="font-bold">{count}</span></p>
+            <p className="text-[20px] text-white">Count: <span className="font-bold">{count}</span></p>
           </div>
 
           <div className="">
