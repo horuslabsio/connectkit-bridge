@@ -37,7 +37,6 @@ export default function Page() {
       });
 
       console.log(wallet, 'wallet')
-
       setConnection(wallet);
       setAccount(wallet?.account);
       setAddress(wallet?.selectedAddress)
@@ -93,7 +92,7 @@ export default function Page() {
           </button>
         </div>
       ) : (
-        <button  className="" onClick={disconnectFn}>
+        <button  className="text-white py-5" onClick={disconnectFn}>
           Disconnect
         </button> 
       )}
